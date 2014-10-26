@@ -39,14 +39,16 @@ total_subset <-cbind(total_data_set[562:563],mean_subset, std_subset)
 
 #Read the activity mapping file and add a column to total_subset, mapping the 
 #acivitity id to activity name
+
+library(dplyr)
 activity_mapping <-read.table("getdata-projectfiles-UCI HAR Dataset/UCI HAR Dataset/activity_labels.txt")
 total_subset <- mutate(total_subset,Feature_name = activity_mapping[Feature_trained,2])
 
 #Create an independent tidy data set with the average of each variable for
 #each activity and each subject. 
-library(dplyr)
-group_by_subject <- group_by(total_subset,subject_id,Feature_name)
-final <- summarise_each(group_by_subject,funs(mean))
+
+group_by_activity_subject <- group_by(total_subset,Feature_name,subject_id)
+final <- summarise_each(group_by_activity_subject,funs(mean))
 
 #Create a text file for upload to the course project assignment evaluation
 write.table(final, file ="tidy_data.txt",row.name=FALSE)
